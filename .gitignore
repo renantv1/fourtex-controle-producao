@@ -1,0 +1,25 @@
+# Dependências
+node_modules/
+
+# Build
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Env (nunca subir credenciais)
+.env
+.env.local
+.env.production
+.vercel

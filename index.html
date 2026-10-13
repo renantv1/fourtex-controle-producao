@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#F9FAFB" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>FourTEX — Controle de Produção</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { height: 100%; overscroll-behavior: none; }
+      body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #F9FAFB; }
+      #root { height: 100%; }
+      input, select, button, textarea { font-family: inherit; }
+      ::-webkit-scrollbar { width: 5px; height: 5px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+
+      /* Splash removido — loading feito pelo React */
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.jsx"></script>
+    <script>
+      window.__hideSplash = function() {
+        var s = document.getElementById('splash');
+        if (s) { s.classList.add('hide'); setTimeout(function(){ s.remove(); }, 350); }
+      };
+      // Captura erros não tratados e exibe em vez de tela preta
+      window.addEventListener('error', function(e) {
+        document.body.style.background = '#fff';
+        document.body.innerHTML = '<div style="padding:24px;font-family:monospace;color:#111">'
+          + '<h2 style="color:#DC2626;margin-bottom:12px">Erro</h2>'
+          + '<pre style="white-space:pre-wrap;font-size:11px">' + (e.message||'') + '\n' + (e.filename||'') + ':' + (e.lineno||'') + '</pre>'
+          + '<button onclick="location.reload()" style="margin-top:16px;padding:8px 16px;background:#F97316;color:#fff;border:none;border-radius:8px;font-size:14px">Recarregar</button>'
+          + '</div>';
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        document.body.style.background = '#fff';
+        document.body.innerHTML = '<div style="padding:24px;font-family:monospace;color:#111">'
+          + '<h2 style="color:#DC2626;margin-bottom:12px">Erro (promise)</h2>'
+          + '<pre style="white-space:pre-wrap;font-size:11px">' + (e.reason||'') + '</pre>'
+          + '<button onclick="location.reload()" style="margin-top:16px;padding:8px 16px;background:#F97316;color:#fff;border:none;border-radius:8px;font-size:14px">Recarregar</button>'
+          + '</div>';
+      });
+    </script>
+  </body>
+</html>

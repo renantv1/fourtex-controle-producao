@@ -1,0 +1,36 @@
+export const TNT_CATALOG = [
+    // 1,40m — BRANCO
+    { codigo: "4096", largura: "1.40", gramatura: 12,  cor: "branco", metragem: 2000 },
+    { codigo: "4020", largura: "1.40", gramatura: 30,  cor: "branco", metragem: 1000 },
+    { codigo: "4376", largura: "1.40", gramatura: 30,  cor: "branco", metragem: 750  },
+    { codigo: "3984", largura: "1.40", gramatura: 35,  cor: "branco", metragem: 500  },
+    { codigo: "3976", largura: "1.40", gramatura: 40,  cor: "branco", metragem: 500  },
+    { codigo: "4029", largura: "1.40", gramatura: 40,  cor: "branco", metragem: 100  },
+    { codigo: "3970", largura: "1.40", gramatura: 60,  cor: "branco", metragem: 350  },
+    { codigo: "4036", largura: "1.40", gramatura: 80,  cor: "branco", metragem: 250  },
+    { codigo: "3971", largura: "1.40", gramatura: 80,  cor: "branco", metragem: 300  },
+    { codigo: "4035", largura: "1.40", gramatura: 100, cor: "branco", metragem: 200  },
+    { codigo: "4065", largura: "1.40", gramatura: 12,  cor: "branco", metragem: 3000 },
+    // 1,40m — PRETO
+    { codigo: "4424", largura: "1.40", gramatura: 80,  cor: "preto",  metragem: 300  },
+    { codigo: "3985", largura: "1.40", gramatura: 35,  cor: "preto",  metragem: 500  },
+    { codigo: "3972", largura: "1.40", gramatura: 40,  cor: "preto",  metragem: 500  },
+    { codigo: "4034", largura: "1.40", gramatura: 40,  cor: "preto",  metragem: 100  },
+    { codigo: "3969", largura: "1.40", gramatura: 50,  cor: "preto",  metragem: 350  },
+    { codigo: "3965", largura: "1.40", gramatura: 60,  cor: "preto",  metragem: 350  },
+    { codigo: "3968", largura: "1.40", gramatura: 80,  cor: "preto",  metragem: 250  },
+    { codigo: "3994", largura: "1.40", gramatura: 100, cor: "preto",  metragem: 200  },
+    // 2,10m — BRANCO
+    { codigo: "3978", largura: "2.10", gramatura: 12,  cor: "branco", metragem: 2000 },
+    { codigo: "4040", largura: "2.10", gramatura: 30,  cor: "branco", metragem: 600  },
+    { codigo: "4045", largura: "2.10", gramatura: 30,  cor: "branco", metragem: 750  },
+    { codigo: "4025", largura: "2.10", gramatura: 40,  cor: "branco", metragem: 500  },
+    // 2,10m — PRETO
+    { codigo: "3979", largura: "2.10", gramatura: 40,  cor: "preto",  metragem: 500  },
+    { codigo: "4377", largura: "2.10", gramatura: 40,  cor: "preto",  metragem: 350  },
+    { codigo: "4037", largura: "2.10", gramatura: 50,  cor: "preto",  metragem: 350  },
+    { codigo: "3977", largura: "2.10", gramatura: 60,  cor: "preto",  metragem: 350  },
+    { codigo: "3966", largura: "2.10", gramatura: 60,  cor: "preto",  metragem: 300  },
+    { codigo: "3990", largura: "2.10", gramatura: 80,  cor: "preto",  metragem: 300  },
+    { codigo: "4038", largura: "2.10", gramatura: 80,  cor: "preto",  metragem: 250  },
+];

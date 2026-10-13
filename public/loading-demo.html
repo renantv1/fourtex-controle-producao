@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FourTEX — Demo Loading</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet"/>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { width: 100vw; height: 100vh; overflow: hidden; background: #060d14; font-family: 'Inter', Arial, sans-serif; }
+
+    /* ── Animações ── */
+    @keyframes slide-left  { from { transform: translateX(-105%); } to { transform: translateX(0); } }
+    @keyframes slide-up    { from { transform: translateY(105%);  } to { transform: translateY(0); } }
+    @keyframes slide-right { from { transform: translateX(105%);  } to { transform: translateX(0); } }
+
+    @keyframes logo-scale-in {
+        0%   { opacity: 0; transform: scale(0.7); }
+        60%  { opacity: 1; transform: scale(1.04); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes oval-draw {
+        from { stroke-dashoffset: 900; opacity: 0; }
+        to   { stroke-dashoffset: 0;   opacity: 1; }
+    }
+    @keyframes text-in {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+        0%   { left: -80%; }
+        100% { left: 130%; }
+    }
+
+    /* ── Painéis ── */
+    .panel { position: absolute; inset: 0; }
+
+    .p1 {
+        clip-path: polygon(0 0, 42% 0, 56% 100%, 0 100%);
+        animation: slide-left 2.2s cubic-bezier(0.16,1,0.3,1) 0.4s both;
+    }
+    .p2 {
+        clip-path: polygon(40% 0, 62% 0, 76% 100%, 24% 100%);
+        animation: slide-up 2.2s cubic-bezier(0.16,1,0.3,1) 1.4s both;
+    }
+    .p2 img { filter: brightness(0.9); object-fit: cover; object-position: center 60%; }
+    .p3 {
+        clip-path: polygon(60% 0, 100% 0, 100% 100%, 44% 100%);
+        animation: slide-right 2.2s cubic-bezier(0.16,1,0.3,1) 2.4s both;
+    }
+    .panel img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        object-position: center center;
+    }
+    .p2 img {
+        object-fit: contain;
+        background: #0a0f18;
+        object-position: center center;
+    }
+    .panel::after {
+        content: ""; position: absolute; inset: 0;
+        background: rgba(6,13,20,0.45);
+        z-index: 1;
+    }
+    .p3::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(210deg, rgba(6,13,20,0.55) 0%, rgba(6,13,20,0.4) 100%);
+    }
+
+    /* Label produto nos painéis */
+    .label-panel {
+        position: absolute;
+        font-size: 12px; font-weight: 800;
+        color: #fff;
+        letter-spacing: 0.3em; text-transform: uppercase;
+        writing-mode: horizontal-tb;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+    }
+    .label-vies    { bottom: 12%; left: 6%; }
+    .label-elastic { bottom: 12%; left: 28%; }
+    .label-cordao  { bottom: 12%; left: 63%; }
+
+    /* Overlay gradiente central */
+    .overlay {
+        position: absolute; inset: 0;
+        background: radial-gradient(ellipse 50% 55% at 50% 50%, rgba(6,13,20,0.7) 0%, transparent 100%);
+        pointer-events: none;
+    }
+
+    /* ── Logo ── */
+    .logo-wrap {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        animation: logo-scale-in 0.9s cubic-bezier(0.34,1.56,0.64,1) 4.4s both;
+    }
+
+    .logo-container {
+        position: relative;
+        width: 310px; height: 160px;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+    }
+
+    /* Oval SVG — desenhado progressivamente */
+    .oval-svg {
+        position: absolute;
+        top: 0; left: 0;
+        width: 310px; height: 160px;
+        overflow: visible;
+        animation: text-in 0.1s ease 4.4s both;
+    }
+    .oval-top {
+        stroke-dasharray: 900;
+        stroke-dashoffset: 900;
+        animation: oval-draw 1.2s ease-out 4.8s forwards;
+    }
+    .oval-bottom {
+        stroke-dasharray: 900;
+        stroke-dashoffset: 900;
+        animation: oval-draw 1.2s ease-out 5.2s forwards;
+    }
+
+    /* Texto da logo */
+    .brand {
+        display: flex; align-items: baseline;
+        position: relative; z-index: 1;
+        animation: text-in 0.5s ease 4.5s both; opacity: 0;
+    }
+    .brand-four {
+        font-size: 52px; font-weight: 300;
+        color: #5BA4D4;
+        letter-spacing: -1px;
+        font-family: Georgia, 'Times New Roman', serif;
+    }
+    .brand-tex {
+        font-size: 52px; font-weight: 900;
+        color: #fff;
+        letter-spacing: -1px;
+        font-family: 'Inter', Arial, sans-serif;
+        position: relative;
+        overflow: hidden;
+    }
+    /* Shimmer no TEX */
+    .brand-tex::after {
+        content: "";
+        position: absolute; top: 0; left: -80%;
+        width: 50%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+        animation: shimmer 1.4s ease 5.4s 1 forwards;
+    }
+    .brand-r {
+        font-size: 14px; font-weight: 700; color: #5BA4D4;
+        align-self: flex-start; margin-top: 9px; margin-left: 2px;
+        font-family: 'Inter', Arial, sans-serif;
+    }
+    .brand-sub {
+        font-size: 10px; font-weight: 600;
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 0.28em; text-transform: uppercase;
+        margin-top: 6px; position: relative; z-index: 1;
+        animation: text-in 0.6s ease 5s both; opacity: 0;
+    }
+
+    /* Botão replay */
+    .replay {
+        position: fixed; bottom: 20px; right: 20px;
+        background: rgba(91,164,212,0.15); color: #5BA4D4;
+        border: 1px solid rgba(91,164,212,0.3);
+        border-radius: 8px; padding: 8px 16px;
+        font-size: 12px; font-weight: 600; cursor: pointer;
+        backdrop-filter: blur(8px); transition: background 0.2s;
+        font-family: 'Inter', Arial, sans-serif;
+    }
+    .replay:hover { background: rgba(91,164,212,0.25); }
+</style>
+</head>
+<body>
+
+<div class="panel p1">
+    <img src="https://images.pexels.com/photos/15391103/pexels-photo-15391103.jpeg?auto=compress&cs=tinysrgb&w=1200" alt=""/>
+    <span class="label-panel" style="bottom:12%;left:6%;z-index:2">Cordão</span>
+</div>
+<div class="panel p2">
+    <img src="/Fotos/elastico.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:100% 70%;filter:brightness(0.55);"/>
+    <span class="label-panel" style="bottom:12%;left:28%;z-index:2">Elástico</span>
+</div>
+<div class="panel p3">
+    <img src="https://images.pexels.com/photos/36656807/pexels-photo-36656807.jpeg?auto=compress&cs=tinysrgb&w=1200" alt=""/>
+    <span class="label-panel" style="bottom:12%;left:63%;z-index:2">Viés</span>
+</div>
+
+<div class="overlay"></div>
+
+<div class="logo-wrap">
+    <div class="logo-container">
+        <!-- Oval SVG desenhado progressivamente -->
+        <svg class="oval-svg" viewBox="0 0 310 160">
+            <!-- Metade superior — azul -->
+            <ellipse class="oval-top" cx="155" cy="80" rx="148" ry="72"
+                fill="none" stroke="#5BA4D4" stroke-width="5"
+                stroke-dasharray="900" pathLength="900"
+                clip-path="url(#top-half)"/>
+            <!-- Metade inferior — cinza escuro -->
+            <ellipse class="oval-bottom" cx="155" cy="80" rx="148" ry="72"
+                fill="none" stroke="#2a2a2a" stroke-width="5"
+                stroke-dasharray="900" pathLength="900"
+                clip-path="url(#bottom-half)"/>
+            <defs>
+                <clipPath id="top-half">
+                    <rect x="0" y="0" width="310" height="80"/>
+                </clipPath>
+                <clipPath id="bottom-half">
+                    <rect x="0" y="80" width="310" height="80"/>
+                </clipPath>
+            </defs>
+        </svg>
+
+        <div class="brand">
+            <span class="brand-four">Four</span>
+            <span class="brand-tex">TEX</span>
+            <span class="brand-r">®</span>
+        </div>
+        <div class="brand-sub">Indústria Têxtil</div>
+    </div>
+</div>
+
+<button class="replay" onclick="location.reload()">↺ Replay</button>
+
+</body>
+</html>
