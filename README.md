@@ -11,7 +11,7 @@ Sistema web que desenvolvi sozinho para a FourTEX, indústria têxtil de fitas, 
 - **Estoque:** produto acabado e matéria-prima. Cada apontamento dá baixa automática do fio consumido.
 - **Planejamento e metas:** previsão de fio necessário por pedido, custo de fio e dashboard com indicadores.
 - **Etiquetas automáticas:** um serviço em Node.js (`etiqueta-printer/`) monitora uma fila no Firebase e imprime em impressora térmica Elgin.
-- **Controle de acesso:** perfis (administrador, operador, apontador, mecânico, comercial…) com permissões por tela e separação entre visualizar e editar.
+- **Controle de acesso:** perfis (administrador, operador, apontador, mecânico, comercial…) com permissões por tela e separação entre visualizar e editar. Senhas guardadas apenas como hash SHA-256, com migração automática de contas antigas no primeiro login.
 - **Relatórios:** exportação em CSV e PDF.
 - **PWA:** instalável no celular, compatível com aparelhos antigos (Android 6+, iOS 12+) e com atualização automática de versão.
 
@@ -28,6 +28,11 @@ npm run dev
 ```
 
 Usuários de demonstração: `admin` / `demo` e `operador` / `demo`.
+
+## Próximos passos
+
+- Migrar o login para o Firebase Authentication (e-mail e senha), validando o acesso no servidor.
+- Dividir os componentes maiores em partes menores e adicionar testes automatizados.
 
 ## Autor
 

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { ref, onValue, set, update, push, get, remove } from "firebase/database";
 import { db, authReady } from "./firebase";
 import { USERS, INITIAL_MACHINES } from "./constants";
+import { hashSenha, verificarSenha, semSenha } from "./utils/senha";
 import { workdaysBetween, addWorkdays, today, parseTimestampBR } from "./utils";
 import LoginPage from "./components/LoginPage";
 import Sidebar from "./components/Sidebar";
@@ -213,7 +214,7 @@ export default function App() {
                 const existingLogins = list.map(u => u.login);
                 for (const u of USERS) {
                     if (!existingLogins.includes(u.login)) {
-                        await push(ref(db, "usuarios"), { name: u.name, login: u.login, senha: u.senha, role: u.role, permissoes: u.permissoes || null });
+                        await push(ref(db, "usuarios"), { name: u.name, login: u.login, senhaHash: await hashSenha(u.login, u.senha), role: u.role, permissoes: u.permissoes || null });
                     }
                 }
                 // Garante que admins sempre têm acesso completo (atualiza se faltam abas novas)
@@ -236,7 +237,7 @@ export default function App() {
             } else {
                 // Seed inicial dos usuários do constants.js
                 const seed = {};
-                USERS.forEach(u => { seed[u.id] = { name: u.name, login: u.login, senha: u.senha, role: u.role, permissoes: u.permissoes || null }; });
+                for (const u of USERS) { seed[u.id] = { name: u.name, login: u.login, senhaHash: await hashSenha(u.login, u.senha), role: u.role, permissoes: u.permissoes || null }; }
                 await set(ref(db, "usuarios"), seed);
                 setUsuariosCarregados(true);
             }
@@ -464,15 +465,23 @@ export default function App() {
         setTimeout(() => setNotification(null), 3000);
     };
 
-    const handleLogin = () => {
-        const found = usuarios.length > 0
-            ? usuarios.find(u => u.login === login.trim().toLowerCase() && u.senha === senha)
-            : USERS.find(u => u.login === login && u.senha === senha);
+    const handleLogin = async () => {
+        const loginNorm = login.trim().toLowerCase();
+        const candidato = usuarios.length > 0
+            ? usuarios.find(u => u.login === loginNorm)
+            : USERS.find(u => u.login === loginNorm);
+        const ok = usuarios.length > 0 ? await verificarSenha(candidato, senha) : candidato?.senha === senha;
+        const found = ok ? candidato : null;
         if (found) {
-            setUser(found);
+            // Migração: usuário antigo com senha em texto puro passa a ter só o hash
+            if (found.key && !found.senhaHash) {
+                try { await update(ref(db, `usuarios/${found.key}`), { senhaHash: await hashSenha(found.login, senha), senha: null }); } catch {}
+            }
+            const sessao = semSenha(found);
+            setUser(sessao);
             setLoginError("");
             setTab("dashboard");
-            try { localStorage.setItem("fitas_session", JSON.stringify(found)); } catch {}
+            try { localStorage.setItem("fitas_session", JSON.stringify(sessao)); } catch {}
         }
         else setLoginError("Usuário ou senha incorretos.");
     };

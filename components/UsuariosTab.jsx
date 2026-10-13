@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { hashSenha } from "../utils/senha";
 
 function useIsMobile() {
     const [m, setM] = useState(() => window.innerWidth < 640);
@@ -165,12 +166,10 @@ function badge(role) {
 }
 
 export default function UsuariosTab({ usuarios = [], notify, onRecalcularEntregas, onPreviewUser, currentLogin, podeEditar = true }) {
-    const podeVerSenhas = (currentLogin || "").toLowerCase() === "renan";
     const isMobile = useIsMobile();
     const [form, setForm] = useState(EMPTY_FORM);
     const [editKey, setEditKey] = useState(null);
     const [showForm, setShowForm] = useState(false);
-    const [showSenha, setShowSenha] = useState({});
     const [confirmDelete, setConfirmDelete] = useState(null);
     const [confirmReset, setConfirmReset] = useState(false);
     const [permUserKey, setPermUserKey] = useState("");
@@ -228,13 +227,14 @@ export default function UsuariosTab({ usuarios = [], notify, onRecalcularEntrega
         const maquinasInput = u.maquinasPermitidas?.length ? u.maquinasPermitidas.join(",") : "";
         const permissoes = u.role === "admin" ? ALL_TAB_IDS : (u.permissoes || []);
         const permissoesEdicao = u.role === "admin" ? ALL_TAB_IDS : (u.permissoesEdicao || u.permissoes || []);
-        setForm({ name: u.name, login: u.login, senha: u.senha, role: u.role, permissoes, permissoesEdicao, maquinasInput });
+        setForm({ name: u.name, login: u.login, senha: "", role: u.role, permissoes, permissoesEdicao, maquinasInput });
         setEditKey(u.key);
         setShowForm(true);
     };
 
     const handleSave = async () => {
-        if (!form.name.trim() || !form.login.trim() || !form.senha.trim()) {
+        // Na edição, senha em branco = mantém a senha atual
+        if (!form.name.trim() || !form.login.trim() || (!editKey && !form.senha.trim())) {
             notify("Preencha nome, login e senha.", "error");
             return;
         }
@@ -245,7 +245,14 @@ export default function UsuariosTab({ usuarios = [], notify, onRecalcularEntrega
             return;
         }
         const maquinasPermitidas = parseMaquinas(form.maquinasInput);
-        const data = { name: form.name.trim(), login: loginLower, senha: form.senha.trim(), role: form.role, permissoes: form.permissoes, permissoesEdicao: form.permissoesEdicao, maquinasPermitidas: maquinasPermitidas || null };
+        const atual = usuarios.find(u => u.key === editKey);
+        const loginMudou = editKey && atual && atual.login !== loginLower;
+        if (loginMudou && !form.senha.trim()) {
+            notify("Ao mudar o login, defina uma nova senha.", "error");
+            return;
+        }
+        const senhaCampos = form.senha.trim() ? { senhaHash: await hashSenha(loginLower, form.senha.trim()), senha: null } : {};
+        const data = { name: form.name.trim(), login: loginLower, ...senhaCampos, role: form.role, permissoes: form.permissoes, permissoesEdicao: form.permissoesEdicao, maquinasPermitidas: maquinasPermitidas || null };
         if (editKey) {
             await update(ref(db, `usuarios/${editKey}`), data);
             notify("Usuário atualizado!");
@@ -274,7 +281,7 @@ export default function UsuariosTab({ usuarios = [], notify, onRecalcularEntrega
                         <div style={{ fontSize: 13, color: "#6B7280", marginTop: 2 }}>Gerencie os acessos ao sistema</div>
                     </div>
                     <div style={{ display: "flex", gap: 10 }}>
-                        {podeVerSenhas && onRecalcularEntregas && (
+                        {onRecalcularEntregas && (
                             <button onClick={() => { if (window.confirm("Recalcular quantidades entregues e status de todos os pedidos? Use isso se um pedido concluído não voltou a aparecer após excluir uma entrega.")) onRecalcularEntregas(); }} style={{
                                 display: "flex", alignItems: "center", gap: 6,
                                 background: "#fff", color: "#111827", border: "1px solid #ECEDF1",
@@ -317,10 +324,6 @@ export default function UsuariosTab({ usuarios = [], notify, onRecalcularEntrega
                                     <div style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{permUser.name}</div>
                                     <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>
                                         login: <b>{permUser.login}</b>
-                                        {podeVerSenhas && <> · senha: <span style={{ fontFamily: "monospace" }}>{showSenha[permUser.key] ? permUser.senha : "••••"}</span>
-                                            <button onClick={() => setShowSenha(s => ({ ...s, [permUser.key]: !s[permUser.key] }))} style={{ marginLeft: 4, background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#9CA3AF", textDecoration: "underline" }}>
-                                                {showSenha[permUser.key] ? "ocultar" : "ver"}
-                                            </button></>}
                                     </div>
                                 </div>
                             </div>
@@ -385,21 +388,9 @@ export default function UsuariosTab({ usuarios = [], notify, onRecalcularEntrega
                             </div>
                         </div>
 
-                        {/* Login + senha */}
+                        {/* Login */}
                         <div style={{ padding: "0 16px 12px", fontSize: 12, color: "#9CA3AF", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                             <span>login: <b style={{ color: "#374151" }}>{u.login}</b></span>
-                            <span style={{ color: "#ECEDF1" }}>·</span>
-                            {podeVerSenhas && (
-                            <span>senha:{" "}
-                                <span style={{ fontFamily: "monospace", color: "#374151" }}>
-                                    {showSenha[u.key] ? u.senha : "••••"}
-                                </span>
-                                <button onClick={() => setShowSenha(s => ({ ...s, [u.key]: !s[u.key] }))} style={{
-                                    marginLeft: 4, background: "none", border: "none", cursor: "pointer",
-                                    fontSize: 11, color: "#9CA3AF", padding: "0 2px", textDecoration: "underline",
-                                }}>{showSenha[u.key] ? "ocultar" : "ver"}</button>
-                            </span>
-                        )}
                         </div>
 
                         {/* Permissões agrupadas por setor */}
@@ -457,7 +448,7 @@ export default function UsuariosTab({ usuarios = [], notify, onRecalcularEntrega
                             {[
                                 { label: "Nome completo", field: "name", placeholder: "Ex: João Silva" },
                                 { label: "Login", field: "login", placeholder: "Ex: joao" },
-                                { label: "Senha", field: "senha", placeholder: "Ex: 1234" },
+                                { label: "Senha", field: "senha", placeholder: editKey ? "Deixe em branco para manter a atual" : "Mínimo 4 caracteres" },
                             ].map(({ label, field, placeholder }) => (
                                 <div key={field}>
                                     <div style={{ fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 4 }}>{label}</div>
